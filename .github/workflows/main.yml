@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - deploy-to-ec2
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,7 +18,7 @@ jobs:
       - name: Build docker image
         run: docker build -t sai70950/go-app .
       - name: Push image to docker hub
-        run: docker push sai70950/go-app:latest
+        run: docker push sai70950s/go-app:latest
   deploy:
     needs: build
     runs-on: self-hosted
