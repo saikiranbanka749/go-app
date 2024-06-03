@@ -1,30 +1,31 @@
-name: Deploy go lang application
+name: Deploy Go Application
 
 on:
- push:
-   branches:
-     - deploy-ec2-instance
+  push:
+    branches:
+      - deploy-to-ec2
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout source
+      - name: Checkout Source
         uses: actions/checkout@v4
-     - name: Create .env file
+      - name: Create .env file
         run: echo "PORT=${{ secrets.PORT }}" >> .env
-     - name: Login to docker hub
+      - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-     - name: Build docker image
-        run: docker build -t sai70950/go-lang .
-     - name: Push image to docker hub
-        run: docker push sai70950/go-lang:latest
-deploy:
+      - name: Build docker image
+        run: docker build -t sai70950/go-app .
+      - name: Push image to docker hub
+        run: docker push sai70950/go-app:latest
+  deploy:
     needs: build
     runs-on: self-hosted
     steps:
       - name: Pull docker image
-        run: docker pull sai70950/go-lang:latest
+        run: docker pull sai70950/go-app:latest
       - name: Delete old container
         run: docker rm -f go-app-container  
       - name: Run docker container          
-        run: docker run -d -p 4040:4040 --name go-app-container sai70950/go-lang
+        run: docker run -d -p 4040:4040 --name go-app-container sai70950/go-app
